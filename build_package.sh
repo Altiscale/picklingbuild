@@ -20,8 +20,8 @@ pushd ${WORKSPACE}
 
 # This is a hack to just package the JAR before we can build it correctly
 # hack_target should exist already with the JARs we need
-export RPM_NAME=`echo scala-pickling-${PACKAGE_BRANCH}`
-export RPM_DESCRIPTION="scala-pickling library ${PACKAGE_BRANCH}"
+export RPM_NAME=`echo scala-pickling-${BUILD_BRANCH}`
+export RPM_DESCRIPTION="scala-pickling library ${BUILD_BRANCH}"
 
 ##################
 # Packaging  RPM #
@@ -32,16 +32,19 @@ rm -rf "${RPM_BUILD_DIR}"
 mkdir --mode=0755 -p "${RPM_BUILD_DIR}"
 
 pushd hack_target
-if [[ "$PACKAGE_BRANCH" == *_2.10 ]] ; then
+if [[ "$BUILD_BRANCH" == *_2.10 ]] ; then
   mkdir --mode=0755 -p "${RPM_BUILD_DIR}/lib"
   cp -rp scala-pickling_2.10-*.jar $RPM_BUILD_DIR/lib/
-elif [[ "$PACKAGE_BRANCH" == *_2.11 ]] ; then
+elif [[ "$BUILD_BRANCH" == *_2.11 ]] ; then
   mkdir --mode=0755 -p "${RPM_BUILD_DIR}/lib_2.11"
   cp -rp scala-pickling_2.11-*.jar $RPM_BUILD_DIR/lib_2.11/
 else
-  echo "fatal - unsupported version for $PACKAGE_BRANCH, can't produce RPM, quitting!"
+  echo "fatal - unsupported version for $BUILD_BRANCH, can't produce RPM, quitting!"
   exit -1
 fi
+popd
+mkdir -p "${RPM_BUILD_DIR}/licenses"
+cp LICENSE "${RPM_BUILD_DIR}/licenses/"
 
 mkdir -p ${RPM_DIR}
 pushd ${RPM_DIR}
@@ -60,7 +63,7 @@ fpm --verbose \
 -s dir \
 -t rpm \
 -n ${RPM_NAME} \
--v ${PACKAGE_BRANCH} \
+-v ${BUILD_BRANCH} \
 --iteration ${DATE_STRING} \
 --rpm-user root \
 --rpm-group root \
