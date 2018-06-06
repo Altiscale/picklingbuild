@@ -1,0 +1,10 @@
+FROM buildenv-java8
+
+WORKDIR /home/jenkins-builder/build
+
+ADD build_package.sh /home/jenkins-builder/build_package.sh
+RUN chmod a+rx /home/jenkins-builder/build_package.sh
+RUN chown jenkins-builder:jenkins-builder /home/jenkins-builder/build_package.sh && \
+    chown -R jenkins-builder:jenkins-builder /home/jenkins-builder/build
+USER jenkins-builder
+CMD /home/jenkins-builder/build_package.sh
