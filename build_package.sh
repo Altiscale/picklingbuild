@@ -11,6 +11,7 @@ echo "ok - PACKAGE_BRANCH=$PACKAGE_BRANCH"
 ret=0
 export DATE_STRING=${DATE_STRING:-$(date -u +%Y%m%d%H%M)}
 INSTALL_DIR=${WORKSPACE}/install-dir-${DATE_STRING}
+RPM_DIR=${WORKSPACE}/rpm-dir-${DATE_STRING}
 pushd ${WORKSPACE}
 
 # pushd ${WORKSPACE}/pickling
@@ -42,6 +43,7 @@ else
   exit -1
 fi
 
+mkdir -p ${RPM_DIR}
 pushd ${RPM_DIR}
 fpm --verbose \
 --maintainer andrew.lee02@sap.com \
