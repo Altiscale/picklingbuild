@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -x
 
 cd ${WORKSPACE}
 
@@ -29,13 +29,18 @@ export RPM_BUILD_DIR="${INSTALL_DIR}/usr/sap/spark/controller/"
 # Generate RPM based on where spark artifacts are placed from previous steps
 rm -rf "${RPM_BUILD_DIR}"
 mkdir --mode=0755 -p "${RPM_BUILD_DIR}"
-mkdir --mode=0755 -p "${RPM_BUILD_DIR}/lib"
-mkdir --mode=0755 -p "${RPM_BUILD_DIR}/lib_2.11"
 
 pushd hack_target
-# deploy test suite and scripts
-cp -rp scala-pickling_2.10-*.jar $RPM_BUILD_DIR/lib/
-cp -rp scala-pickling_2.11-*.jar $RPM_BUILD_DIR/lib_2.11/
+if [[ "$PACKAGE_BRANCH" == *_2.10 ]] ; then
+  mkdir --mode=0755 -p "${RPM_BUILD_DIR}/lib"
+  cp -rp scala-pickling_2.10-*.jar $RPM_BUILD_DIR/lib/
+elif [[ "$PACKAGE_BRANCH" == *_2.11 ]] ; then
+  mkdir --mode=0755 -p "${RPM_BUILD_DIR}/lib_2.11"
+  cp -rp scala-pickling_2.11-*.jar $RPM_BUILD_DIR/lib_2.11/
+else
+  echo "fatal - unsupported version for $PACKAGE_BRANCH, can't produce RPM, quitting!"
+  exit -1
+fi
 
 pushd ${RPM_DIR}
 fpm --verbose \
