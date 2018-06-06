@@ -38,18 +38,16 @@ fi
 export JENKINS_DIR="/home/$BUILD_USER"
 export PACKAGE_BUILD_NAME="${PACKAGE_NAME}build"
 export DOCKER_BUILD_DIR="${JENKINS_DIR}/build"
-export PACKAGE_BUILD_DIR="${DOCKER_BUILD_DIR}/${PACKAGE_BUILD_NAME}"
 
 docker run \
   --rm \
   -v ${HOME}/.m2:/home/$BUILD_USER/.m2 \
   -v ${HOME}/.m2/repository:/home/$BUILD_USER/.m2/repository \
   -v ${PWD}:${DOCKER_BUILD_DIR} \
-  -v ${PWD}/${PACKAGE_BUILD_NAME}:${PACKAGE_BUILD_DIR} \
   -u $BUILD_USER \
   -w ${JENKINS_DIR} \
   --env=BUILD_BRANCH=${BUILD_BRANCH} \
   --env=PACKAGE_BRANCH=${PACKAGE_BRANCH} \
-  --env=WORKSPACE=${PACKAGE_BUILD_DIR} \
+  --env=WORKSPACE=${DOCKER_BUILD_DIR} \
   --env=MAVEN_OPTS="${MAVEN_OPTS}" \
   ${DOCKER_RPMBUILD_IMAGE_NAME}
