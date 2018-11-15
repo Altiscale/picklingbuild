@@ -1,0 +1,3 @@
+[submodule "pickling"]
+	path = pickling
+	url = https://github.com/Altiscale/pickling.git
