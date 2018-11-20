@@ -2,11 +2,11 @@
 FROM docker-dev.artifactory.service.altiscale.com/hercules
 WORKDIR /root
 
-RUN groupadd -g 10001 jenkins-builder
-RUN useradd -u 10001 -g 10001 -ms /bin/bash jenkins-builder
-RUN mkdir -p /home/jenkins-builder/build
-RUN chown jenkins-builder:jenkins-builder /home/jenkins-builder/build
-ENV DOCKER_WORKSPACE /home/jenkins-builder/build
+RUN groupadd -g 500 jenkins-slave
+RUN useradd -u 500 -g 500 -ms /bin/bash jenkins-slave
+RUN mkdir -p /home/jenkins-slave/build
+RUN chown jenkins-slave:jenkins-slave /home/jenkins-slave/build
+ENV DOCKER_WORKSPACE /home/jenkins-slave/build
 
 # 2) install packages for apache spark compile
 # Install common dependencies for packages
