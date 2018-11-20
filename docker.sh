@@ -4,7 +4,7 @@ PACKAGE_NAME=${PACKAGE_NAME:-"scala-pickling"}
 PACKAGE_BRANCH=${PACKAGE_BRANCH:-"0.11.x"}
 BUILD_BRANCH=${BUILD_BRANCH:-"v0.11.0-M1_2.11"}
 DOCKER_BASE_IMAGE_NAME=buildenv-java8
-BUILD_USER=jenkins-builder
+BUILD_USER=jenkins-slave
 
 # 1. build docker (compile environment)
 docker build \
