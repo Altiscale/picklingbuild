@@ -4,10 +4,19 @@ PACKAGE_NAME=${PACKAGE_NAME:-"scala-pickling"}
 PACKAGE_BRANCH=${PACKAGE_BRANCH:-"0.11.x"}
 BUILD_BRANCH=${BUILD_BRANCH:-"v0.11.0-M1_2.11"}
 DOCKER_BASE_IMAGE_NAME=buildenv-java8
+rev=$(date "+%Y%m%d%H%M")
+DOCKER_RPMBUILD_IMAGE_NAME="${PACKAGE_NAME}build:latest"
 BUILD_USER=jenkins-slave
+
+# 0. clean up old images due to uid:gid fluctuates.
+# always return true b/c we don't care if image isn't found
+docker 2>/dev/null rmi -f "${DOCKER_BASE_IMAGE_NAME}" | true
+docker 2>/dev/null rmi -f "${DOCKER_RPMBUILD_IMAGE_NAME}" | true
 
 # 1. build docker (compile environment)
 docker build \
+  --build-arg JB_UID=$(id -u) \
+  --build-arg JB_GID=$(id -g) \
   -t ${DOCKER_BASE_IMAGE_NAME} \
   -f Dockerfile \
   .
@@ -19,12 +28,11 @@ if [[ ${retval} != 0 ]]; then
 fi
 
 # 2. build docker (build package rpm)
-rev=$(date "+%Y%m%d%H%M")
-#DOCKER_RPMBUILD_IMAGE_NAME="${PACKAGE_NAME}build:${rev}"
-DOCKER_RPMBUILD_IMAGE_NAME="${PACKAGE_NAME}build:latest"
 echo "DOCKER_RPMBUILD_IMAGE_NAME: ${DOCKER_RPMBUILD_IMAGE_NAME}"
 
 docker build \
+  --build-arg JB_UID=$(id -u) \
+  --build-arg JB_GID=$(id -g) \
   -t "${DOCKER_RPMBUILD_IMAGE_NAME}" \
   -f Dockerfile.build \
   .
